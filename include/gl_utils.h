@@ -1,20 +1,25 @@
-#ifndef GL_INCLUDED
-#define GL_INCLUDED
+#ifndef GL_UTILS
+#define GL_UTILS
 #define GLAD_GL_IMPLEMENTATION
 #include<gl/gl.h>
 #define GLFW_INCLUDE_NONE
 #include<gl/glfw3.h>
 #include<stdio.h>
+#include<str_utils.h>
 #include<nec.h>
 GLFWwindow *window = 0;
 #include<input.h>
 
+#undef swap
+#undef max
+#undef min
+#undef clamp
 #define swap(a, b) (a += b, b = a - b, a -= b)
 #define max(a, b) ((a) >= (b) ? (a) : (b))
 #define min(a, b) ((a) <= (b) ? (a) : (b))
 #define clamp(v, mi, ma) min(max(v, mi), ma)
 
-double time = 0.0, dt = 0.0, second = 0.0;
+double dt = 0.0, second = 0.0;
 int fps = 0;
 
 float Q_rsqrt( float number )
@@ -77,13 +82,11 @@ void start( int(*loop)() )
         double new_time = glfwGetTime();
         double a = new_time - last_time;
         if(a < 1.0 / 60.0) continue;
+        dt   = new_time - last_time;
         last_time = new_time;
-        dt   = new_time - time;
-        time = new_time;
 
         if(glfwWindowShouldClose(window) ||
-        glfwGetKey(window, GLFW_KEY_ESCAPE) ||
-        glfwGetKey(window, GLFW_KEY_Q)) break;
+        glfwGetKey(window, GLFW_KEY_ESCAPE)) break;
 
         glClear(GL_COLOR_BUFFER_BIT);
         glBegin(GL_POINTS);
@@ -100,7 +103,7 @@ void start( int(*loop)() )
         }
         else
         {
-            printf("FPS = %d\n", fps);
+            // printf("FPS = %d\n", fps);
             fps = 0;
             second -= 1.0;
         }

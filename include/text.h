@@ -401,9 +401,16 @@ void drawChar(char ch, int x, int y, char c)
 void drawString(char* s, int x, int y, char c)
 {
     int i = 0;
+    int xoff = 0;
+    int yoff = 0;
     while(s[i] != '\0')
     {
-        drawChar(s[i], x + i*6, y, c);
+        if(s[i] != '\n') drawChar(s[i], x + xoff++*6, y-yoff*8, c);
+        else
+        {
+            xoff=0;
+            yoff++;
+        }
         i++;
     }
 }
