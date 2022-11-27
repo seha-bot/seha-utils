@@ -26,6 +26,7 @@ void* threadDraw()
     while(1)
     {
         FILE * fp = fopen("/dev/ttyACM0", "r");
+        if(!fp) continue;
         fread(buff, MS, 1, fp);
         int i = 0;
         while(i < MS)
