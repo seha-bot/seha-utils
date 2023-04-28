@@ -1,31 +1,29 @@
-FLAGS := -Iinc -Ideps
+FLAGS := -Iinc -Ibuild/deps
 LIBS := -lm
 
 src := $(wildcard src/*.c)
 obj := $(src:src/%.c=build/%.o)
 dep := $(addprefix build/,$(shell cat deps.list))
 
-all: build main
-
-build: compile_flags.txt | $(dep)
-	@mkdir -p build
-
-compile_flags.txt: Makefile
-	@echo $(FLAGS) | tr " " "\n" > $@
+all: build build/main
 
 $(dep): deps.list
-	@mkdir -p deps && cd deps && \
+	@mkdir -p build/deps && cd build/deps && \
 	GET=$(patsubst build/%,https://%,$@) && \
 	echo Downloading $$GET && \
 	curl -O $$GET
 	@mkdir -p $$(dirname $@) && touch $@
 
-main: $(obj)
-	@gcc $^ -Llib $(LIBS) -o build/$@
+build: | $(dep)
+	@echo $(FLAGS) | tr " " "\n" > compile_flags.txt
+	@mkdir -p build
 
 build/%.o: src/%.c
 	@gcc -c $(FLAGS) $^ -o $@
 
+build/main: $(obj)
+	@gcc $^ -Llib $(LIBS) -o $@
+
 clean:
-	rm -rf build deps compile_flags.txt
+	rm -rf build compile_flags.txt
 
