@@ -1,13 +1,17 @@
-CFLAGS=-lm
+FLAGS := -Iinc -Ideps
+LIBS := -lm
 
 src := $(wildcard src/*.c)
 obj := $(src:src/%.c=build/%.o)
 dep := $(addprefix build/,$(shell cat deps.list))
 
-all: build
+all: build main
 
-build: | $(dep)
+build: compile_flags.txt | $(dep)
 	@mkdir -p build
+
+compile_flags.txt: Makefile
+	@echo $(FLAGS) | tr " " "\n" > $@
 
 $(dep): deps.list
 	@mkdir -p deps && cd deps && \
@@ -17,11 +21,11 @@ $(dep): deps.list
 	@mkdir -p $$(dirname $@) && touch $@
 
 main: $(obj)
-	@gcc $^ -Llib $(CFLAGS) -o build/$@
+	@gcc $^ -Llib $(LIBS) -o build/$@
 
 build/%.o: src/%.c
-	@gcc -c -Iinc $^ -o $@
+	@gcc -c $(FLAGS) $^ -o $@
 
 clean:
-	rm -rf build deps
+	rm -rf build deps compile_flags.txt
 

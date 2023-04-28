@@ -1,8 +1,11 @@
 #include <stdio.h>
+#include "nec.h"
 
 int main()
 {
-    printf("IDEMOOO\n");
+    int* a = 0;
+    nec_push(a, 23);
+    printf("IDEMOOO %d\n", a[0]);
     return 0;
 }
 
