@@ -1,12 +1,9 @@
 FLAGS := -Iinc -Ibuild/deps
 LIBS := -lm
 
-src := $(wildcard src/*.c)
-obj := $(src:src/%.c=build/%.o)
+all: build/main
+
 dep := $(addprefix build/,$(shell cat deps.list))
-
-all: build build/main
-
 $(dep): deps.list
 	@mkdir -p build/deps && cd build/deps && \
 	GET=$(patsubst build/%,https://%,$@) && \
@@ -16,10 +13,11 @@ $(dep): deps.list
 
 build: | $(dep)
 	@echo $(FLAGS) | tr " " "\n" > compile_flags.txt
-	@mkdir -p build
+	@#mkdir -p build
 
-build/%.o: src/%.c
-	@gcc -c $(FLAGS) $^ -o $@
+src := $(wildcard src/*.c build/deps/*.c)
+obj := $(addprefix build/,$(shell basename -a $(src)))
+obj := $(obj:%.c=%.o)
 
 build/main: $(obj)
 	@gcc $^ -Llib $(LIBS) -o $@
