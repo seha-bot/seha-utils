@@ -21,8 +21,11 @@ build: | $(dep)
 	@gcc -c -Ideps \$$^ -o \$$@" > build/Makefile
 	@cd build/ && make
 
+DEPS := $(wildcard build/*.d)
+-include $(DEPS)
+
 build/%.o: src/%.c
-	@gcc -c $(FLAGS) $^ -o $@
+	@gcc -c -MD $(FLAGS) $< -o $@
 
 src := $(wildcard src/*.c)
 obj := $(src:src/%.c=build/%.o)
