@@ -1,7 +1,7 @@
 FLAGS := -Iinc -Ibuild/deps
 LIBS := -lm
 
-all: build/main
+all: build build/main
 
 dep := $(addprefix build/,$(shell cat deps.list))
 $(dep): deps.list
@@ -14,13 +14,21 @@ $(dep): deps.list
 build: | $(dep)
 	@echo $(FLAGS) | tr " " "\n" > compile_flags.txt
 	@#mkdir -p build
+	@echo -e "src := \$$(wildcard deps/*.c)\n\
+	obj := \$$(src:deps/%.c=%.o)\n\
+	all: \$$(obj)\n\
+	%.o: deps/%.c\n\t\
+	@gcc -c -Ideps \$$^ -o \$$@" > build/Makefile
+	@cd build/ && make
 
-src := $(wildcard src/*.c build/deps/*.c)
-obj := $(addprefix build/,$(shell basename -a $(src)))
-obj := $(obj:%.c=%.o)
+build/%.o: src/%.c
+	@gcc -c $(FLAGS) $^ -o $@
+
+src := $(wildcard src/*.c)
+obj := $(src:src/%.c=build/%.o)
 
 build/main: $(obj)
-	@gcc $^ -Llib $(LIBS) -o $@
+	@gcc build/*.o -Llib $(LIBS) -o $@
 
 clean:
 	rm -rf build compile_flags.txt
