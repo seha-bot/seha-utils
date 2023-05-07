@@ -13,7 +13,7 @@ $(dep): deps.list
 
 build: | $(dep)
 	@echo $(FLAGS) | tr " " "\n" > compile_flags.txt
-	@#mkdir -p build
+	@mkdir -p build
 	@echo -e "src := \$$(wildcard deps/*.c)\n\
 	obj := \$$(src:deps/%.c=%.o)\n\
 	all: \$$(obj)\n\
