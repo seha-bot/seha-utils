@@ -1,0 +1,11 @@
+{
+    "int": 123123,
+    "double": 3.140000,
+    "string": "Bilo koji text",
+    "objekat": {
+        "jos jedan int": 33,
+        "drugi objekat": {
+            "nesto trece": "enis"
+        }
+    }
+}

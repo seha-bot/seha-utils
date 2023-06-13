@@ -1,5 +1,5 @@
 FLAGS := -Iinc -Ibuild/deps
-LIBS := -lm
+LIBS := -lm -lpthread
 
 all: build build/main
 
